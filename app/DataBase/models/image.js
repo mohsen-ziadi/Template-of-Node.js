@@ -14,6 +14,10 @@ const Image = sequelize.define('image', {
 		validate: {
 			notEmpty: true
 		}
+	},
+	section:{
+		type:DataTypes.STRING(150),
+		allowNull:false
 	}
 }, {
 	tableName: 'images',
