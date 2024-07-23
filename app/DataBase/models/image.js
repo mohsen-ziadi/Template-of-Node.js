@@ -1,7 +1,8 @@
 'use strict';
 
 const { DataTypes } = require('sequelize');
-const sequelize = require('../conn');
+const sequelize = require('../../DataBase/conn'); 
+
 
 const Image = sequelize.define('image', {
 	src: {
