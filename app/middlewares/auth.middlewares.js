@@ -3,25 +3,16 @@
 // json web token module
 const jwt = require('jsonwebtoken')
 
-
-
-function checkAdminLogin(req, res, next) {
-	if(!req.body.username || !req.body.password) {
-		return res.status(406).send({ success: false, message: 'The username or password is not correct.' })
-	}
-	if(req.body.username.length < 8 || req.body.password.length < 16) {
-		return res.status(406).send({ success: false, message: 'The username or password is not correct.' })
-	}
-	next()
-}
 function verifyToken(req, res, next) {
-	let token = req.headers["zi-access-token"] || req.cookies['zi-access-token'];
-	if (!token) {
+	let BearerToken = req.headers["access-token"] || req.cookies['access-token'];
+	if (!BearerToken) {
 		return res.status(403).json({ success: false, message: "No token provided." });
 	}
 
+	let token = BearerToken.split(" ")[1] || BearerToken;
 	jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
 		if (err) {
+			console.log("err>>", err);
 			return res.status(401).json({ success: false, message: "Unauthorized!" });
 		}
 		const date = new Date()
@@ -36,9 +27,7 @@ function verifyToken(req, res, next) {
 	});
 }
 
-
 // export middleware
 module.exports = {
-	checkAdminLogin,
 	verifyToken
 }

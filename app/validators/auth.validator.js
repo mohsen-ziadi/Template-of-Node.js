@@ -10,18 +10,9 @@ async function checkPhone(req, res, next) {
 	let checkPhone = regex.test(req.body.phone)
 	if (!req.body.phone) {
 		return res.status(400).json({ success: false, message: 'The phone field is required.' })
-
-	}
-	
-	const user = await User.findOne({
-		where: { phone: req.body.phone }
-	})
-
-	if (!checkPhone) {
+		
+	} else if (!checkPhone) {
 		return res.status(403).json({ success: false, message: 'The phone number is wrong' })
-
-	} else if (user) {
-		return res.status(403).json({ success: false, message: 'The user is available with this phone number' })
 
 	} else {
 		next()
