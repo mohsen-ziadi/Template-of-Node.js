@@ -4,42 +4,55 @@ const shortHash = require('short-hash');
 const md5 = require('md5')
 
 const User = require('../DataBase/models/user');
-const Account = require('../DataBase/models/account')
 
-async function SignUp(req, res, next) {
+
+async function getMyData(req, res, next) {
 	try {
-
-		return res.status(200).json({
-			success: true,
-			message: 'User created.',
+		const user = await User.findOne({
+			where: { id: req.user.id },
+			attributes: { exclude: ['password'] }
 		});
-		
-		// return res.json({
-		// 	success: true,
-		// 	message: 'User created.',
-		// });
 
-	} catch (e) {
-		next(e);
-	}
-}
-async function login(req, res, next) {
-	try {
-	return res.status(200).json({
-			success: true,
-			message: 'You login successfully.',
-		})
-	} catch (e) {
-		next(e);
-	}
-}
+		if (!user) {
+			throw new BaseErr(
+				'TheUserNotFound',
+				404,
+				true,
+				`The user not found:(`
+			);
+		}
 
-async function forgetPassword(req, res, next) {
-	try {
 		return res.status(200).json({
 			success: true,
-			message: 'the password changes',
-		})
+			message: 'The process is done',
+			data: user
+		});
+
+	} catch (e) {
+		next(e);
+	}
+}
+
+async function editMyData(req, res, next) {
+	try {
+		const { fullName, bio } = req.body;
+
+		const [updated] = await User.update(
+			{ fullName, bio },
+			{
+				where: { id: req.user.id },
+			}
+		);
+		console.log("updated>",updated);
+		if (updated) {
+			const updatedUser = await User.findOne({ where: { id: req.user.id } });
+			return res.status(200).json({
+				success: true,
+				message: 'The process is done',
+				data: updatedUser
+			});
+		}
+
 	} catch (e) {
 		next(e);
 	}
@@ -47,7 +60,6 @@ async function forgetPassword(req, res, next) {
 
 
 module.exports = {
-	SignUp,
-	login,
-	forgetPassword
+	getMyData,
+	editMyData
 }
