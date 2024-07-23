@@ -1,0 +1,7 @@
+# Project exclude paths
+/node_modules/
+.idea/
+.development.env
+.production.env
+.test.env
+/app/public/uploads
