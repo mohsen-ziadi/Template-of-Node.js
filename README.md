@@ -1,15 +1,21 @@
-# mohsen_server
-The template of express.js
+# Template Of Node.js
+The template of express.js by Mohsen
 
 
 
-# Run
+# install dependencies
 ```bash
-# install packages
 npm install
+```
 
-# run server
+# migration database in development Mode
+```bash
 npm run dev:migrate
+```
+# run server in development Mode
+```bash
 npm run dev
+```
+
 
 
