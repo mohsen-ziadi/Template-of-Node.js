@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const BaseErr = require('../errors/baseErr');
-const md5 = require('md5')
 
 const User = require('../DataBase/models/user');
+
+const md5 = require('md5')
 
 async function Register(req, res, next) {
 	try {
