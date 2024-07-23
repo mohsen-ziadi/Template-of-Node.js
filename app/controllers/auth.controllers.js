@@ -47,12 +47,12 @@ async function Register(req, res, next) {
 	}
 }
 
-
 async function login(req, res, next) {
 	try {
 		const user = await User.findOne({
 			where: { phone: req.body.phone }
-		})
+		});
+
 		if (!user) {
 			throw new BaseErr(
 				'UserNotExisted',
@@ -63,13 +63,27 @@ async function login(req, res, next) {
 		}
 
 		if (user.password === md5(String(req.body.password))) {
-			token = jwt.sign({
+			const accessToken = jwt.sign({
 				user: {
 					id: user.id
 				}
-			}, process.env.JWT_SECRET, { expiresIn: +process.env.JWT_EXPIRATION || 2592000 });
+			}, process.env.JWT_SECRET, { expiresIn: '15m' });
 
-			user.setDataValue('token', token);
+			const refreshToken = jwt.sign({
+				user: {
+					id: user.id
+				}
+			}, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
+
+			user.setDataValue('refreshToken', refreshToken);
+
+			return res.status(202).json({
+				success: true,
+				message: 'You login successfully.',
+				name: user.fullName,
+				accessToken: accessToken,
+				refreshToken: refreshToken
+			});
 		} else {
 			throw new BaseErr(
 				'UserNotExisted',
@@ -78,32 +92,55 @@ async function login(req, res, next) {
 				`the user not existed, Do you want to signUp?`
 			);
 		}
-
-		return res.status(202).json({
-			success: true,
-			message: 'You login successfully.',
-			name: user.fullName,
-			accessToken: token
-		})
 	} catch (e) {
+		next(e);
+	}
+}
+
+
+async function refreshToken(req, res, next) {
+	const { refreshToken } = req.body;
+
+	if (!refreshToken) {
+		throw new BaseErr(
+			'NoTokenProvided.',
+			403,
+			true,
+			`No token provided.`
+		);
+	}
+
+	try {
+		const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+		const accessToken = jwt.sign({
+			user: {
+				id: decoded.user.id
+			}
+		}, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+		return res.status(200).json({
+			success: true,
+			accessToken: accessToken
+		});
+	} catch (err) {
 		next(e);
 	}
 }
 
 async function forgetPassword(req, res, next) {
 	try {
-		return res.status(200).json({
-			success: true,
-			message: 'the password changes',
+		return res.status(422).json({
+			success: false,
+			message: 'There is no process to execute this command',
 		})
 	} catch (e) {
 		next(e);
 	}
 }
 
-
 module.exports = {
 	Register,
 	login,
-	forgetPassword
+	forgetPassword,
+	refreshToken
 }
