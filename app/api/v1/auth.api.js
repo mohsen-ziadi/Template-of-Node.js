@@ -9,6 +9,5 @@ const { Register, login, forgetPassword } = require('../../controllers/auth.cont
 
 router.post('/register', [checkPhone, checkPassword, checkEmail], Register);
 router.post('/login', checkPhone, login);
-// router.post('/forget-password', checkPhone, forgetPassword);
 
 module.exports = router;
