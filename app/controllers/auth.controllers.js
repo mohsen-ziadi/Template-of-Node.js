@@ -46,6 +46,8 @@ async function Register(req, res, next) {
 		next(e);
 	}
 }
+
+
 async function login(req, res, next) {
 	try {
 		const user = await User.findOne({
@@ -81,7 +83,7 @@ async function login(req, res, next) {
 			success: true,
 			message: 'You login successfully.',
 			name: user.fullName,
-			token:token
+			accessToken: token
 		})
 	} catch (e) {
 		next(e);
