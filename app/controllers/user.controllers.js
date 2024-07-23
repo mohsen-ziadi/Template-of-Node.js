@@ -37,21 +37,45 @@ async function editMyData(req, res, next) {
 	try {
 		const { fullName, bio } = req.body;
 
-		const [updated] = await User.update(
+		const updated = await User.update(
 			{ fullName, bio },
 			{
 				where: { id: req.user.id },
 			}
 		);
-		console.log("updated>",updated);
-		if (updated) {
-			const updatedUser = await User.findOne({ where: { id: req.user.id } });
-			return res.status(200).json({
-				success: true,
-				message: 'The process is done',
-				data: updatedUser
-			});
+
+		if (!updated) {
+			throw new BaseErr(
+				'UpdateUserEror',
+				400,
+				true,
+				`Update user eror`
+			);
 		}
+
+		const updatedUser = await User.findOne({ where: { id: req.user.id } });
+		return res.status(200).json({
+			success: true,
+			message: 'The process is done',
+			data: updatedUser
+		});
+
+	} catch (e) {
+		next(e);
+	}
+}
+
+async function remove(req, res, next) {
+	try {
+		const user = await User.destroy({
+			where: { id: req.user.id }
+		  });
+
+		console.log("user>",user);
+		return res.status(200).json({
+			success: true,
+			message: 'The user removed'
+		});
 
 	} catch (e) {
 		next(e);
@@ -61,5 +85,6 @@ async function editMyData(req, res, next) {
 
 module.exports = {
 	getMyData,
-	editMyData
+	editMyData,
+	remove
 }
