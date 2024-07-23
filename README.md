@@ -3,16 +3,16 @@ The template of express.js by Mohsen
 
 
 
-# install dependencies
+install dependencies
 ```bash
 npm install
 ```
 
-# migration database in development Mode
+migration database in development Mode
 ```bash
 npm run dev:migrate
 ```
-# run server in development Mode
+run server in development Mode
 ```bash
 npm run dev
 ```
