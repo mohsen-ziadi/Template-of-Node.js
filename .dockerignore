@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=mohsen
+      - DB_USER=root
+      - DB_PASS=M4350666880@z
+      - DB_DIALECT=mysql
+      - CORS_DOMAINS=*
+      - JWT_SECRET=79a27c4174b7e4ef35e043c7c9ee56850ef971342a1c593c1e7aea28ca703525
+      - JWT_REFRESH_SECRET=8cae3fe0a376696d9ed4babe4c0ec995c2c18fd8a7462b756afa6c755fdc4bca
+      - JWT_EXPIRATION=86400
+    depends_on:
+      - db
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: M4350666880@z
+      MYSQL_DATABASE: mohsen
+    ports:
+      - "3306:3306"
